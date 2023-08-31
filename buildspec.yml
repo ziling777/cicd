@@ -1,0 +1,55 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+
+  pre_build:
+    commands:
+      - echo Starting to download code from ZEEKR!
+      - aws --version
+      - yum install net-tools -y
+      - echo `ifconfig`
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 866665982863.dkr.ecr.eu-central-1.amazonaws.com
+      # 安装python环境
+      - pip install --upgrade pip
+      - pip install dbt-core==1.4.5
+      - pip install dbt-redshift==1.4.0
+      - pip install sqlfluff==2.0.3
+      - pip install sqlfluff-templater-dbt==2.0.3
+      
+  build:
+    commands:
+      # 拉取gitlab代码
+      - echo git clone project `date`
+      - echo Branch is $GIT_BRANCH
+      - GIT_PROJECT_URL=${GIT_PROJECT_URL#https://}
+      #- git clone -b $GIT_BRANCH https://DMZtoken:$GIT_ACCESS_TOKEN@git-devops.zeekrlife.com/bigdata/warehouse/demo_redshift_tpch.git
+      - echo Project url is $GIT_PROJECT_URL
+      - echo "GIT_ACCESS_TOKEN========>${GIT_ACCESS_TOKEN}"
+      - echo "GIT_PROJECT_URL========>${GIT_PROJECT_URL}"
+      - git clone -b $GIT_BRANCH https://DMZtoken:$GIT_ACCESS_TOKEN@$GIT_PROJECT_URL
+      - ls
+      # 编译DBT代码
+      - echo Compile DBT started on `date`
+      - cd $GIT_PROJECT_NAME
+      - echo execute dbt deps!
+      - dbt deps
+      # 推送镜像到ECS
+      - echo Build image!
+      - cat Dockerfile
+        #- docker build -f ./Dockerfile -t cosmos-dbt:latest .
+      - docker build -f ../Dockerfile -t $REPOSITORY_NAME:$REPOSITORY_TAG .
+      #- docker tag cosmos-dbt:latest 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
+      - docker tag $REPOSITORY_NAME:$REPOSITORY_TAG $REPOSITORY_URI:$REPOSITORY_TAG
+      - echo Push image!
+      #- docker push 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
+      - docker push $REPOSITORY_URI:$REPOSITORY_TAG
+
+  post_build:
+    commands:
+      - echo Copy DBT to MWAA `date`
+      # - aws s3 cp $GIT_PROJECT_NAME s3://bi-poc-s3/cicd-test/bi-poc-dbt-doc/ --recursive
+      - cd ..
+      - aws s3 cp $GIT_PROJECT_NAME $MWAA_DAGS_DIR --recursive
