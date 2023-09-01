@@ -39,10 +39,11 @@ phases:
       # 推送镜像到ECS
       - echo Build image!
       #- docker build -f ./Dockerfile -t cosmos-dbt:latest .
-      - echo $REPOSITORY_NAME:$REPOSITORY_TAG
-      - docker build -f ../Dockerfile -t $REPOSITORY_NAME:$REPOSITORY_TAG .
+      - echo $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
+      - docker build -f ../Dockerfile -t $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG .
       #- docker tag cosmos-dbt:latest 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
-      - docker tag $REPOSITORY_NAME:$REPOSITORY_TAG $REPOSITORY_URI:$REPOSITORY_TAG
+      - echo $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
+      - docker tag $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
       - echo Push image!
       #- docker push 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
       - docker push $REPOSITORY_URI:$REPOSITORY_TAG
