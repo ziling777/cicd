@@ -46,7 +46,7 @@ phases:
       - docker tag $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
       - echo Push image!
       #- docker push 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
-      - docker push $REPOSITORY_URI:$REPOSITORY_TAG
+      - docker push $REPOSITORY_URI/$GIT_PROJECT_NAME:$REPOSITORY_TAG
 
   post_build:
     commands:
