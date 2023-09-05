@@ -76,6 +76,10 @@ phases:
         echo "DELETED_FILES========>$DELETED_FILES"
         # 对删除的DAG文件进行删除操作
         if [[ -n "$DELETED_FILES" ]]; then
+          # 如果Dags目录不是以/结尾的话补充/
+          if [[ $MWAA_DAGS_DIR != */ ]]; then
+            MWAA_DAGS_DIR="$MWAA_DAGS_DIR/"
+          fi
           for i in $DELETED_FILES
           do
             s3_file=${i//\"/}
@@ -92,6 +96,10 @@ phases:
 
         # 判断DBT工程是否存在，如果存在进行删除
         if aws s3 ls $MWAA_DBT_DIR$GIT_PROJECT_NAME ; then
+          # 如果DBT目录不是以/结尾的话补充/
+          if [[ $MWAA_DBT_DIR != */ ]]; then
+            MWAA_DBT_DIR="$MWAA_DBT_DIR/"
+          fi
           echo "========>In delete dbt project file $MWAA_DBT_DIR$GIT_PROJECT_NAME begin!"
           aws s3 rm $MWAA_DBT_DIR$GIT_PROJECT_NAME --recursive
           echo "========>In delete dbt project file $MWAA_DBT_DIR$GIT_PROJECT_NAME end!"

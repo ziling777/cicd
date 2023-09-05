@@ -40,3 +40,18 @@ do
   #   #echo "========>delete file $MWAA_DAGS_DIR$delfilename end!"
   # fi
 done
+
+
+
+
+
+path="/path/to/directory/"
+
+if [[ $path != */ ]]; then
+  path="$path/"
+fi
+
+echo "============>$path"
+
+
+
