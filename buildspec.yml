@@ -6,7 +6,9 @@ phases:
 
   pre_build:
     commands:
+      - echo "GIT_PROJECT_URL==========>$GIT_PROJECT_URL"
       - domain=${GIT_PROJECT_URL#*//}
+      - echo "domain ========> $domain"
       - domain=${domain%%/*})
       - echo "domain ========> $domain"
       - echo Starting to download code from ZEEKR!
