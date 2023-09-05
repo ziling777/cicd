@@ -6,14 +6,6 @@ phases:
 
   pre_build:
     commands:
-      - echo "GIT_PROJECT_URL==========>$GIT_PROJECT_URL"
-      - GIT_PROJECT_DOMAIN=${GIT_PROJECT_URL#*//}
-      - domain=${GIT_PROJECT_URL#*//}
-      - echo "domain ========> $domain"
-      - echo "GIT_PROJECT_DOMAIN =======> $GIT_PROJECT_DOMAIN"
-      - GIT_PROJECT_DOMAIN=${GIT_PROJECT_DOMAIN%%/*}
-      - domain=${domain%%/*}
-      - echo "GIT_PROJECT_DOMAIN ========> $GIT_PROJECT_DOMAIN"
       - echo Starting to download code from ZEEKR!
       - aws --version
       # #- yum install net-tools -y
@@ -37,7 +29,6 @@ phases:
       - GIT_PROJECT_URL_TEMP=${GIT_PROJECT_URL#https://}
       #- git clone -b $GIT_BRANCH https://DMZtoken:$GIT_ACCESS_TOKEN@git-devops.zeekrlife.com/bigdata/warehouse/demo_redshift_tpch.git
       - echo Project url is $GIT_PROJECT_URL_TEMP
-      - echo "GIT_ACCESS_TOKEN========>${GIT_ACCESS_TOKEN}"
       - echo "GIT_PROJECT_URL_TEMP========>${GIT_PROJECT_URL_TEMP}"
       - git clone -b $GIT_BRANCH https://DMZtoken:$GIT_ACCESS_TOKEN@$GIT_PROJECT_URL_TEMP
       - ls
@@ -66,8 +57,6 @@ phases:
         GIT_PROJECT_DOMAIN=${GIT_PROJECT_DOMAIN%%/*}
         echo "https://$GIT_PROJECT_DOMAIN/api/v4/projects/$GIT_PROJECT_ID/merge_requests/$GIT_PROJECT_IID/changes"
 
-        ls
-
         # 使用 curl 获取返回的json文件，并使用 jq 解压出增加和修改的文件  
         ADD_MODIFIED_FILES=$(curl --header "PRIVATE-TOKEN: $GIT_ACCESS_TOKEN" "https://$GIT_PROJECT_DOMAIN/api/v4/projects/$GIT_PROJECT_ID/merge_requests/$GIT_PROJECT_IID/changes" | jq -c '.changes[] | select(.old_path | startswith("dags/")) | select(.new_file == true or .renamed_file == true or .modified_file == true) | .new_path')
         echo "ADD_MODIFIED_FILES========>$ADD_MODIFIED_FILES"
@@ -78,7 +67,7 @@ phases:
             local_file=${i//\"/}
             # 假设你希望在s3存储桶中保留/dags的目录结构
             echo "========>cp $GIT_PROJECT_NAME/$local_file to $MWAA_DAGS_DIR$delfilename begin!"
-            #aws s3 cp $GIT_PROJECT_NAME/$local_file s3://$MWAA_DAGS_DIR
+            aws s3 cp $GIT_PROJECT_NAME/$local_file $MWAA_DAGS_DIR
             echo "========>cp $GIT_PROJECT_NAME/$local_file to $MWAA_DAGS_DIR$delfilename end!"
           done
         fi
@@ -95,8 +84,8 @@ phases:
             echo "========>delete file $MWAA_DAGS_DIR$delfilename outer!"
             if aws s3 ls $MWAA_DAGS_DIR$delfilename ; then
               echo "========>in delete file $MWAA_DAGS_DIR$delfilename begin!"
-            #   #aws s3 rm $MWAA_DAGS_DIR$delfilename
-            #   #echo "========>in delete file $MWAA_DAGS_DIR$delfilename end!"
+              aws s3 rm $MWAA_DAGS_DIR$delfilename
+              echo "========>in delete file $MWAA_DAGS_DIR$delfilename end!"
             fi
           done
         fi
