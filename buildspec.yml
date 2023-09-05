@@ -7,10 +7,13 @@ phases:
   pre_build:
     commands:
       - echo "GIT_PROJECT_URL==========>$GIT_PROJECT_URL"
+      - GIT_PROJECT_DOMAIN=${GIT_PROJECT_URL#*//}
       - domain=${GIT_PROJECT_URL#*//}
       - echo "domain ========> $domain"
+      - echo "GIT_PROJECT_DOMAIN =======> $GIT_PROJECT_DOMAIN"
+      - GIT_PROJECT_DOMAIN=${GIT_PROJECT_DOMAIN%%/*}
       - domain=${domain%%/*}
-      - echo "domain ========> $domain"
+      - echo "GIT_PROJECT_DOMAIN ========> $GIT_PROJECT_DOMAIN"
       - echo Starting to download code from ZEEKR!
       - aws --version
       #- yum install net-tools -y
@@ -57,6 +60,12 @@ phases:
   post_build:
      commands:
       - |
+        echo "GIT_PROJECT_URL==========>$GIT_PROJECT_URL"
+        domain=${GIT_PROJECT_URL#*//}
+        echo "domain ========> $domain"
+        domain=${domain%%/*}
+        echo "domain ========> $domain"
+
         GIT_PROJECT_DOMAIN=${GIT_PROJECT_URL#*//}
         GIT_PROJECT_DOMAIN=${GIT_PROJECT_DOMAIN%%/*}
         echo "GIT_PROJECT_DOMAIN========>$GIT_PROJECT_DOMAIN"
