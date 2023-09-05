@@ -66,9 +66,9 @@ phases:
           do
             local_file=${i//\"/}
             # 假设你希望在s3存储桶中保留/dags的目录结构
-            echo "========>cp $GIT_PROJECT_NAME/$local_file to $MWAA_DAGS_DIR$delfilename begin!"
+            echo "========>Copy dags $GIT_PROJECT_NAME/$local_file to $MWAA_DAGS_DIR$delfilename begin!"
             aws s3 cp $GIT_PROJECT_NAME/$local_file $MWAA_DAGS_DIR
-            echo "========>cp $GIT_PROJECT_NAME/$local_file to $MWAA_DAGS_DIR$delfilename end!"
+            echo "========>Copy dags $GIT_PROJECT_NAME/$local_file to $MWAA_DAGS_DIR$delfilename end!"
           done
         fi
         
@@ -81,11 +81,24 @@ phases:
             s3_file=${i//\"/}
             echo "delete s3_file========>$s3_file"
             delfilename=$(basename "$s3_file")
-            echo "========>delete file $MWAA_DAGS_DIR$delfilename outer!"
+            echo "========>Delete file $MWAA_DAGS_DIR$delfilename outer!"
             if aws s3 ls $MWAA_DAGS_DIR$delfilename ; then
-              echo "========>in delete file $MWAA_DAGS_DIR$delfilename begin!"
+              echo "========>In delete dags file $MWAA_DAGS_DIR$delfilename begin!"
               aws s3 rm $MWAA_DAGS_DIR$delfilename
-              echo "========>in delete file $MWAA_DAGS_DIR$delfilename end!"
+              echo "========>In delete dags file $MWAA_DAGS_DIR$delfilename end!"
             fi
           done
         fi
+
+        # 判断DBT工程是否存在，如果存在进行删除
+        if aws s3 ls $MWAA_DBT_DIR$GIT_PROJECT_NAME ; then
+          echo "========>In delete dbt project file $MWAA_DBT_DIR$GIT_PROJECT_NAME begin!"
+          aws s3 rm $MWAA_DBT_DIR$GIT_PROJECT_NAME --recursive
+          echo "========>In delete dbt project file $MWAA_DBT_DIR$GIT_PROJECT_NAME end!"
+        fi
+
+        # 拷贝DBT工程文件到S3
+        aws s3 cp $GIT_PROJECT_NAME $MWAA_DBT_DIR --recursive
+
+
+
