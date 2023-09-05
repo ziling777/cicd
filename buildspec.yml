@@ -71,3 +71,6 @@ phases:
         GIT_PROJECT_DOMAIN=${GIT_PROJECT_URL#*//}
         GIT_PROJECT_DOMAIN=${GIT_PROJECT_DOMAIN%%/*}
         echo "GIT_PROJECT_DOMAIN333========>$GIT_PROJECT_DOMAIN"
+        # 使用 curl 获取返回的json文件，并使用 jq 解压出增加和修改的文件  
+        ADD_MODIFIED_FILES=$(curl --header "PRIVATE-TOKEN: $TOKEN" "$GIT_PROJECT_DOMAIN/api/v4/projects/$GIT_PROJECT_ID/merge_requests/$GIT_PROJECT_ID/changes" | jq -c '.changes[] | select(.old_path | startswith("/dags")) | select(.new_file == true or .renamed_file == true or .modified_file == true) | .new_path')
+        echo "ADD_MODIFIED_FILES========>$ADD_MODIFIED_FILES"
