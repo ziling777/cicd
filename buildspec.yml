@@ -98,7 +98,8 @@ phases:
         fi
 
         # 拷贝DBT工程文件到S3
-        aws s3 cp $GIT_PROJECT_NAME $MWAA_DBT_DIR/$GIT_PROJECT_NAME --recursive
+        echo "========>Copy dbt project folder $GIT_PROJECT_NAME/$local_file to $MWAA_DAGS_DIR$delfilename begin!"
+        aws s3 cp $GIT_PROJECT_NAME $MWAA_DBT_DIR$GIT_PROJECT_NAME --recursive
 
 
 
