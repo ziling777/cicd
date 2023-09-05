@@ -74,25 +74,29 @@ phases:
         echo "DELETED_FILES========>$DELETED_FILES"
 
         # 对新增或修改的DAG文件进行上传操作
-        for i in $ADD_MODIFIED_FILES
-        do
-          local_file=${i//\"/}
-          # 假设你希望在s3存储桶中保留/dags的目录结构
-          echo "========>add file $MWAA_DBT_DIR$delfilename begin!"
-          #aws s3 cp $local_file s3://$MWAA_DBT_DIR/MWAA_DAGS_DIR
-        done
-
+        if [[ -n "$ADD_MODIFIED_FILES" ]]; then
+          for i in $ADD_MODIFIED_FILES
+          do
+            local_file=${i//\"/}
+            # 假设你希望在s3存储桶中保留/dags的目录结构
+            echo "========>add file $MWAA_DBT_DIR$delfilename begin!"
+            #aws s3 cp $local_file s3://$MWAA_DBT_DIR/MWAA_DAGS_DIR
+          done
+        fi
+        
 
         # 对删除的DAG文件进行删除操作
-        for i in $DELETED_FILES
-        do
-          s3_file=${i//\"/}
-          echo "delete s3_file========>$s3_file"
-          delfilename=$(basename "$s3_file")
-          echo "========>delete file $MWAA_DAGS_DIR$delfilename begin!"
-          # if aws s3 ls s3://$MWAA_DAGS_DIR$delfilename ; then
-          #   echo "========>delete file $MWAA_DAGS_DIR$delfilename begin!"
-          #   #aws s3 rm s3://$MWAA_DAGS_DIR$delfilename
-          #   #echo "========>delete file $MWAA_DAGS_DIR$delfilename end!"
-          # fi
-        done
+        if [[ -n "$DELETED_FILES" ]]; then
+          for i in $DELETED_FILES
+          do
+            s3_file=${i//\"/}
+            echo "delete s3_file========>$s3_file"
+            delfilename=$(basename "$s3_file")
+            echo "========>delete file $MWAA_DAGS_DIR$delfilename outer!"
+            if aws s3 ls $MWAA_DAGS_DIR$delfilename ; then
+              echo "========>in delete file $MWAA_DAGS_DIR$delfilename begin!"
+            #   #aws s3 rm $MWAA_DAGS_DIR$delfilename
+            #   #echo "========>in delete file $MWAA_DAGS_DIR$delfilename end!"
+            fi
+          done
+        fi
