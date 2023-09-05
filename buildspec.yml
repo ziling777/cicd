@@ -89,9 +89,10 @@ phases:
           s3_file=${i//\"/}
           echo "delete s3_file========>$s3_file"
           delfilename=$(basename "$s3_file")
-          if aws s3 ls s3://$MWAA_DAGS_DIR$delfilename ; then
-            echo "========>delete file $MWAA_DAGS_DIR$delfilename begin!"
-            #aws s3 rm s3://$MWAA_DAGS_DIR$delfilename
-            #echo "========>delete file $MWAA_DAGS_DIR$delfilename end!"
-          fi
+          echo "========>delete file $MWAA_DAGS_DIR$delfilename begin!"
+          # if aws s3 ls s3://$MWAA_DAGS_DIR$delfilename ; then
+          #   echo "========>delete file $MWAA_DAGS_DIR$delfilename begin!"
+          #   #aws s3 rm s3://$MWAA_DAGS_DIR$delfilename
+          #   #echo "========>delete file $MWAA_DAGS_DIR$delfilename end!"
+          # fi
         done
