@@ -68,14 +68,9 @@ phases:
           do
             local_file=${i//\"/}
             # 假设你希望在s3存储桶中保留/dags的目录结构
-            echo "========>Copy dags $GIT_PROJECT_NAME/$local_file to $MWAA_DAGS_DIR$delfilename begin!"
-            ls
-
-            echo “==============”
-            ls demo_redshift_tpch/*
-
-            aws s3 cp $GIT_PROJECT_NAME/$local_file $MWAA_DAGS_DIR
-            echo "========>Copy dags $GIT_PROJECT_NAME/$local_file to $MWAA_DAGS_DIR$delfilename end!"
+            echo "========>Copy $local_file to $MWAA_DAGS_DIR$delfilename begin!"
+            aws s3 cp $local_file $MWAA_DAGS_DIR
+             echo "========>Copy $local_file to $MWAA_DAGS_DIR$delfilename end!"
           done
         fi
         
