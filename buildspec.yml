@@ -8,16 +8,16 @@ phases:
     commands:
       - echo Starting to download code from ZEEKR!
       - aws --version
-      # #- yum install net-tools -y
-      # #- echo `ifconfig`
-      # - echo Logging in to Amazon ECR...
-      # - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 866665982863.dkr.ecr.eu-central-1.amazonaws.com
-      # # 安装python环境
-      # - pip install --upgrade pip
-      # - pip install dbt-core==1.4.5
-      # - pip install dbt-redshift==1.4.0
-      # - pip install sqlfluff==2.0.3
-      # - pip install sqlfluff-templater-dbt==2.0.3
+      #- yum install net-tools -y
+      #- echo `ifconfig`
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 866665982863.dkr.ecr.eu-central-1.amazonaws.com
+      # 安装python环境
+      - pip install --upgrade pip
+      - pip install dbt-core==1.4.5
+      - pip install dbt-redshift==1.4.0
+      - pip install sqlfluff==2.0.3
+      - pip install sqlfluff-templater-dbt==2.0.3
       
   build:
     commands:
@@ -32,23 +32,25 @@ phases:
       - echo "GIT_PROJECT_URL_TEMP========>${GIT_PROJECT_URL_TEMP}"
       - git clone -b $GIT_BRANCH https://DMZtoken:$GIT_ACCESS_TOKEN@$GIT_PROJECT_URL_TEMP
       - ls
-      # # 编译DBT代码
-      # - echo Compile DBT started on `date`
-      # - cd $GIT_PROJECT_NAME
-      # - echo execute dbt deps!
-      # - dbt deps
-      # # 推送镜像到ECS
-      # - echo Build image!
-      # #- docker build -f ./Dockerfile -t cosmos-dbt:latest .
-      # - echo $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
-      # - docker build -f ../Dockerfile -t $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG .
-      # - echo Tag image!
-      # #- docker tag cosmos-dbt:latest 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
-      # - docker tag $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
-      # - echo Push image!
-      # - echo $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
-      # #- docker push 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
-      # - docker push $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
+      # 编译DBT代码
+      - echo Compile DBT started on `date`
+      - cd $GIT_PROJECT_NAME
+      - echo execute dbt deps!
+      - dbt deps
+      # 构建镜像
+      - echo Build image!
+      #- docker build -f ./Dockerfile -t cosmos-dbt:latest .
+      - echo $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
+      - docker build -f ../Dockerfile -t $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG .
+      # 给镜像打Tag
+      - echo Tag image!
+      #- docker tag cosmos-dbt:latest 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
+      - docker tag $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
+      # 推送镜像到ECR
+      - echo Push image!
+      - echo $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
+      #- docker push 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
+      - docker push $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
 
   post_build:
      commands:
@@ -58,7 +60,7 @@ phases:
         echo "https://$GIT_PROJECT_DOMAIN/api/v4/projects/$GIT_PROJECT_ID/merge_requests/$GIT_PROJECT_IID/changes"
 
         # 使用 curl 获取返回的json文件，并使用 jq 解压出增加和修改的文件  
-        ADD_MODIFIED_FILES=$(curl --header "PRIVATE-TOKEN: $GIT_ACCESS_TOKEN" "https://$GIT_PROJECT_DOMAIN/api/v4/projects/$GIT_PROJECT_ID/merge_requests/$GIT_PROJECT_IID/changes" | jq -c '.changes[] | select(.old_path | startswith("dags/")) | select(.new_file == true or .renamed_file == true or .modified_file == true) | .new_path')
+        ADD_MODIFIED_FILES=$(curl --header "PRIVATE-TOKEN: $GIT_ACCESS_TOKEN" "https://$GIT_PROJECT_DOMAIN/api/v4/projects/$GIT_PROJECT_ID/merge_requests/$GIT_PROJECT_IID/changes" | jq -c '.changes[] | select(.old_path | startswith("dags/")) | select(.new_file == true or .renamed_file == true or or (.new_file == false and .renamed_file == false and .deleted_file == false)) | .new_path')
         echo "ADD_MODIFIED_FILES========>$ADD_MODIFIED_FILES"
         # 对新增或修改的DAG文件进行上传操作
         if [[ -n "$ADD_MODIFIED_FILES" ]]; then
