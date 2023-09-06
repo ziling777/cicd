@@ -60,7 +60,7 @@ phases:
         echo "https://$GIT_PROJECT_DOMAIN/api/v4/projects/$GIT_PROJECT_ID/merge_requests/$GIT_PROJECT_IID/changes"
 
         # 使用 curl 获取返回的json文件，并使用 jq 解压出增加和修改的文件  
-        ADD_MODIFIED_FILES=$(curl --header "PRIVATE-TOKEN: $GIT_ACCESS_TOKEN" "https://$GIT_PROJECT_DOMAIN/api/v4/projects/$GIT_PROJECT_ID/merge_requests/$GIT_PROJECT_IID/changes" | jq -c '.changes[] | select(.old_path | startswith("dags/")) | select(.new_file == true or .renamed_file == true or or (.new_file == false and .renamed_file == false and .deleted_file == false)) | .new_path')
+        ADD_MODIFIED_FILES=$(curl --header "PRIVATE-TOKEN: $GIT_ACCESS_TOKEN" "https://$GIT_PROJECT_DOMAIN/api/v4/projects/$GIT_PROJECT_ID/merge_requests/$GIT_PROJECT_IID/changes" | jq -c '.changes[] | select(.old_path | startswith("dags/")) | select(.new_file == true or .renamed_file == true or (.new_file == false and .renamed_file == false and .deleted_file == false)) | .new_path')
         echo "ADD_MODIFIED_FILES========>$ADD_MODIFIED_FILES"
         # 对新增或修改的DAG文件进行上传操作
         if [[ -n "$ADD_MODIFIED_FILES" ]]; then
