@@ -1,6 +1,6 @@
-FROM AWS_CCOUNT.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt-base:1.0
+FROM AWS_CCOUNT.dkr.ecr.AWS_REGION.amazonaws.com/cosmos-dbt-base:1.0
 
-ENV AWS_DEFAULT_REGION "eu-central-1"
+ENV AWS_DEFAULT_REGION "AWS_REGION"
 
 # 设置工作目录
 WORKDIR /app
