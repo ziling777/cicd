@@ -11,7 +11,7 @@ phases:
       #- yum install net-tools -y
       #- echo `ifconfig`
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin AWS_CCOUNT.dkr.ecr.eu-central-1.amazonaws.com
+      - aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_CCOUNT.dkr.ecr.AWS_REGION.amazonaws.com
       # Install Python environment
       - pip install --upgrade pip
       - pip install dbt-core==1.4.5
@@ -42,12 +42,12 @@ phases:
       - docker build -f ../Dockerfile -t $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG .
       # Tag the mirror
       - echo Tag image!
-      # E.G.docker tag cosmos-dbt:latest AWS_CCOUNT.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
+      # E.G.docker tag cosmos-dbt:latest AWS_CCOUNT.dkr.ecr.AWS_REGION.amazonaws.com/cosmos-dbt:latest
       - docker tag $REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
       # Push an image to ECR
       - echo Push image!
       - echo $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
-      # E.G. docker push AWS_CCOUNT.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt:latest
+      # E.G. docker push AWS_CCOUNT.dkr.ecr.AWS_REGION.amazonaws.com/cosmos-dbt:latest
       - docker push $REPOSITORY_URI/$REPOSITORY_IMGE_PREFIX$GIT_PROJECT_NAME:$REPOSITORY_TAG
 
   post_build:
