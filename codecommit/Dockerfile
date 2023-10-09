@@ -1,4 +1,4 @@
-FROM 866665982863.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt-base:1.0
+FROM AWS_CCOUNT.dkr.ecr.eu-central-1.amazonaws.com/cosmos-dbt-base:1.0
 
 ENV AWS_DEFAULT_REGION "eu-central-1"
 
