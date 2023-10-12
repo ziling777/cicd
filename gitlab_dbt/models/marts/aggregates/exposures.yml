@@ -1,0 +1,24 @@
+version: 2
+exposures:
+- name: Big customers [chart]
+  type: analysis
+  maturity: low
+  url: https://922c0444.us2a.app.preset.io/superset/explore/p/qeQdZ26Zk84/
+  description: ''
+  depends_on:
+  - ref('dim_customers')
+  - ref('fct_orders')
+  owner:
+    name: dbtuser
+    email: yangwh@amazon.com
+- name: dbt dashboard [dashboard]
+  type: dashboard
+  maturity: low
+  url: https://922c0444.us2a.app.preset.io/superset/dashboard/p/Kk2L43qM90w/
+  description: ''
+  depends_on:
+  - ref('dim_customers')
+  - ref('fct_orders')
+  owner:
+    name: dbtuser
+    email: yangwh@amazon.com

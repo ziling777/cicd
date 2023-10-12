@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+
+  pre_build:
+    commands:
+      - echo Starting to CI...
+      - pip install --upgrade pip
+      - pip install dbt-core==1.4.5
+      - pip install dbt-redshift==1.4.0
+      - pip install sqlfluff==2.0.3
+      - pip install sqlfluff-templater-dbt==2.0.3
+      
+  build:
+    commands:
+      - echo Lint dbt files
+      - dbt deps
+      - sqlfluff lint models --dialect redshift --rules L019,L020,L021,L022 --templater dbt
+
+  post_build:
+    commands:
+      - echo CI completed!

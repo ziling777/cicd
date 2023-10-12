@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+
+  pre_build:
+    commands:
+      - echo Starting to deploy dbt artifact to destinatition!
+      - pip install --upgrade pip
+      - pip install dbt-core==1.4.5
+      - pip install dbt-redshift==1.4.0
+      
+  build:
+    commands:
+      - dbt deps
+      - dbt compile --profiles-dir .
+      - zip -r ../demo_redshift_tpch.zip ./
+      - aws s3 cp ../demo_redshift_tpch.zip s3://bi-mwaa-s3/dbt/bi-poc/
+
+  post_build:
+    commands:
+      - echo Deploy dbt artifact to destination completed!

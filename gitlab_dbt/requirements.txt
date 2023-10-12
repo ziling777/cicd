@@ -1,0 +1,5 @@
+pip>=21.3.0
+dbt-core==1.4.5
+dbt-redshift==1.4.0
+sqlfluff==2.0.3
+sqlfluff-templater-dbt==2.0.3

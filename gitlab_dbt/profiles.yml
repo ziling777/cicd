@@ -1,0 +1,70 @@
+demo_redshift_tpch:
+  target: "{{ env_var('TARGT','dev_password') }}"
+  outputs:
+    dev_password:
+      type: redshift
+      port: 5439
+      host: redshift-cluster-1.xxxx.eu-central-1.redshift.amazonaws.com
+      user: xxxx
+      password: xxxx
+      dbname: poctest
+      schema: tpch
+      threads: 4
+      keepalives_idle: 240 # default 240 seconds
+      connect_timeout: 10 # default 10 seconds
+      ra3_node: true # enables cross-database sources
+
+    dev_iam:
+      type: redshift
+      method: iam
+      cluster_id: redshift-cluster-1
+      port: 5439
+      host: redshift-cluster-1.ctx9gtj8fg9g.eu-central-1.redshift.amazonaws.com
+      user: zeekr
+      dbname: poctest
+      schema: tpch
+      threads: 4
+      keepalives_idle: 240 # default 240 seconds
+      connect_timeout: 10 # default 10 seconds
+      ra3_node: true # enables cross-database sources
+
+    prod_password:
+      type: redshift
+      port: 5439
+      #iam_duration_seconds: 900
+      #iam_profile: arn:aws:iam::866665982863:role/role-redshift-poc-self
+      host: "{{ env_var('DB_HOST') }}"
+      user: "{{ env_var('DB_USER') }}"
+      password: "{{ env_var('DB_PASSWORD') }}"
+      dbname: "{{ env_var('DB_NAME') }}"
+      schema: "{{ env_var('DB_SCHEMA') }}"
+      threads: 4
+      #retries: 1
+      keepalives_idle: 240 # default 240 seconds
+      connect_timeout: 10 # default 10 seconds
+      #sslmode: [optional, set the sslmode used to connect to the database (in case this parameter is set, will look for ca in ~/.postgresql/root.crt)]
+      ra3_node: true # enables cross-database sources
+
+
+    prod_iam:
+      type: redshift
+      method: iam
+      port: 5439
+      cluster_id: "{{ env_var('DB_CLUSTER_ID') }}"
+      #iam_duration_seconds: 900
+      #iam_profile: arn:aws:iam::866665982863:role/role-redshift-poc-self
+      host: "{{ env_var('DB_HOST') }}"
+      user: "{{ env_var('DB_USER') }}"
+      dbname: "{{ env_var('DB_NAME') }}"
+      schema: "{{ env_var('DB_SCHEMA') }}"
+      threads: 4
+      #retries: 1
+      keepalives_idle: 240 # default 240 seconds
+      connect_timeout: 10 # default 10 seconds
+      #sslmode: [optional, set the sslmode used to connect to the database (in case this parameter is set, will look for ca in ~/.postgresql/root.crt)]
+      ra3_node: true # enables cross-database sources
+
+
+
+
+

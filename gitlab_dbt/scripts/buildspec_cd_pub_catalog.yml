@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+
+  pre_build:
+    commands:
+      - echo Starting to publish dbt documentation to destination!
+      - pip install --upgrade pip
+      - pip install dbt-core==1.4.5
+      - pip install dbt-redshift==1.4.0
+      
+  build:
+    commands:
+      - dbt deps
+      - dbt docs generate --profiles-dir .
+      - aws s3 cp target/catalog.json s3://bi-poc-s3/cicd-test/bi-poc-dbt-doc/
+      - aws s3 cp target/index.html s3://bi-poc-s3/cicd-test/bi-poc-dbt-doc/
+      - aws s3 cp target/manifest.json s3://bi-poc-s3/cicd-test/bi-poc-dbt-doc/
+      - aws s3 cp target/run_results.json s3://bi-poc-s3/cicd-test/bi-poc-dbt-doc/
+
+
+  post_build:
+    commands:
+      - echo Publish dbt documentation to destination completed!
