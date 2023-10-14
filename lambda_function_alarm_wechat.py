@@ -10,9 +10,8 @@ logger = logging.getLogger(__name__)
 def lambda_handler(event, context):
     print(f"=====>event={event}")    
     """
-    EU-数仓-生产CICD通知机器人:https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6c0007b2-c343-43f9-811e-a4144a1dbc2b
     """
-    wechatbot_urls = ['https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6c0007b2-c343-43f9-811e-a4144a1dbc2b'] 
+    wechatbot_urls = ['Change your webhook url'] 
     for url in wechatbot_urls:
         send_wechatbot(url, event)
     
